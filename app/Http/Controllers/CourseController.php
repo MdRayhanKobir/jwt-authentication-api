@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CourseController extends Controller
 {
@@ -20,6 +22,8 @@ class CourseController extends Controller
          $data->description=$request->description;
          $data->total_videos=$request->total_videos;
          $data->save();
+
+
           return response()->json([
             'status'=>1,
             'message'=>'successfully course enrollment'
@@ -29,11 +33,40 @@ class CourseController extends Controller
 
     // GET method api
     public function totalCourse(){
+        $id=auth()->user()->id;
+        $data=User::find($id)->courses;
+
+        return response()->json([
+            'status'=>1,
+            'message'=>'total courses information',
+            'courses'=>$data
+        ],200);
 
     }
 
     // delete course delete method api
     public function delete($id){
+
+        $user_id=auth()->user()->id;
+        if(Course::where(
+            ['id'=>$id,
+            'user_id'=>$user_id
+            ])->exists()){
+
+                $data=Course::find($id);
+                $data->delete();
+
+                return response()->json([
+                        'status'=>1,
+                        'message'=>'course successfully delete'
+                ],200);
+
+            }else{
+                return response()->json([
+                    'status'=>1,
+                    'message'=>'course could not found'
+                ],404);
+            }
 
     }
 }

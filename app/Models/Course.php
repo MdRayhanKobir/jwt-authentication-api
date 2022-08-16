@@ -9,7 +9,7 @@ class Course extends Model
 {
     use HasFactory;
 
-    protected $table='course';
+    protected $table='courses';
     public $timestamps=false;
     protected $fillable=['user_id','title','description','total_videos'];
 }
